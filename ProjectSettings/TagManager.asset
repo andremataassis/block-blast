@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Grid
   - BlockCell
+  - Anchor
   layers:
   - Default
   - TransparentFX
