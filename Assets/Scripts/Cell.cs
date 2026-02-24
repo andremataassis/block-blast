@@ -4,6 +4,7 @@ public class Cell : MonoBehaviour
 {
     public Vector2 coord = new Vector2();
     public bool isAnchor = false;
+    public bool hasBlock = false;
 
     private SpriteRenderer spriteRenderer;
     
@@ -16,7 +17,7 @@ public class Cell : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAnchor)
+        if (isAnchor || hasBlock)
         {
             spriteRenderer.color = Color.red;
         }

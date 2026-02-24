@@ -1,11 +1,15 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CellGrid : MonoBehaviour
 {
     [SerializeField] GameObject childPrefab;
 
+    //The current anchor point ON THE GRID
     public GameObject currentAnchorPoint = null;
 
+    #region SINGLETON
     public static CellGrid Instance { get; private set; }
 
     private void Awake()
@@ -18,6 +22,7 @@ public class CellGrid : MonoBehaviour
 
         Instance = this;
     }
+    #endregion SINGLETON
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,20 +45,42 @@ public class CellGrid : MonoBehaviour
     {
         
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         Collider2D myCollider = collision.GetContact(0).otherCollider;
-        GameObject collidedCell = myCollider.gameObject;
+        GameObject myCollidedCell = myCollider.gameObject;
+
         if(collision.collider.gameObject.tag == "Anchor")
         {
-            PlaceAnchorPoint(collidedCell);
+            PlaceAnchorPoint(myCollidedCell, collision.collider.gameObject);
         }
     }
-    public void PlaceAnchorPoint(GameObject cell)
+    public void PlaceAnchorPoint(GameObject anchorCell_grid, GameObject anchorCell_block)
     {
         if (currentAnchorPoint == null) {
-            currentAnchorPoint = cell;
-            cell.GetComponent<Cell>().isAnchor = true;
+            //Get cells around anchor point
+            BlockData data = anchorCell_block.transform.parent.GetComponent<Block>().block_data;
+            List<Vector2> list = data.GetData();
+
+            Vector2 anchorCoord_grid = anchorCell_grid.GetComponent<Cell>().coord;
+
+            //Try to place them
+            foreach(Vector2 cellAround in list)
+            {
+                Transform cellOnGrid = transform.Find($"({anchorCoord_grid.x + cellAround.x}, {anchorCoord_grid.y + cellAround.y})");
+                if (cellOnGrid == null)
+                {
+                    return;
+                }
+                else
+                {
+                    Debug.Log(cellOnGrid);
+                    cellOnGrid.GetComponent<Cell>().hasBlock = true;
+                }
+            }
+
+            currentAnchorPoint = anchorCell_grid;
+            anchorCell_grid.GetComponent<Cell>().isAnchor = true;
         }
     }
 
