@@ -13,6 +13,7 @@ public class Block : MonoBehaviour
     public GameObject anchorCellPrefab;
 
     private Vector2 initialPos;
+    private bool beingDragged = false;
     public BoxCollider2D BoxCollider;
     void Awake()
     {
@@ -29,7 +30,14 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (beingDragged == false)
+        {
+            transform.localScale = new Vector2(0.7f, 0.7f);
+        }
+        else
+        {
+            transform.localScale = Vector2.one;
+        }
     }
     private void createBlock()
     {
@@ -70,6 +78,7 @@ public class Block : MonoBehaviour
     void OnMouseDown()
     {
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+        beingDragged = true;
     }
     private void OnMouseDrag()
     {
@@ -85,6 +94,7 @@ public class Block : MonoBehaviour
         if (result == false)
         {
             transform.position = initialPos;
+            beingDragged = false;
         }
         else
         {

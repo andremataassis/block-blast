@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BlockPool : MonoBehaviour
 {
@@ -41,8 +42,13 @@ public class BlockPool : MonoBehaviour
             int newBlockID = Random.Range(0, blockPrefabs.Length);
             GameObject newBlock = Instantiate(blockPrefabs[newBlockID], this.transform);
 
+            Vector2 size = newBlock.GetComponent<Block>().block_data.getWidthAndHeight();
+
+            float x_offset = size.x % 2 == 0 ? -0.5f : 0;
+            float y_offset = size.y % 2 == 0 ? -0.5f : 0;
+
             newBlock.transform.position = this.transform.position;
-            newBlock.transform.localPosition = new Vector2 (-3 + i*3, 0);
+            newBlock.transform.localPosition = new Vector2 (-3 + i*3 + x_offset, 0 + y_offset);
 
             blocksOut[i] = newBlock;
         }
