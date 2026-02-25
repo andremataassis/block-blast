@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5121008578253201517}
   - component: {fileID: 1185759353291844013}
   m_Layer: 0
-  m_Name: Square 1
+  m_Name: BlockCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

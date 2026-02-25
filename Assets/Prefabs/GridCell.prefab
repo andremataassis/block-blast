@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 61829524830633640}
   - component: {fileID: 4135230657811918351}
   m_Layer: 2
-  m_Name: Square
+  m_Name: GridCell
   m_TagString: Grid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

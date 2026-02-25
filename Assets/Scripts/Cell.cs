@@ -3,8 +3,8 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     public Vector2 coord = new Vector2();
-    public bool isAnchor = false;
-    public bool hasBlock = false;
+    public bool blockOverlay = false;
+    public bool isOccupied = false;
 
     private SpriteRenderer spriteRenderer;
     
@@ -17,12 +17,16 @@ public class Cell : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAnchor || hasBlock)
+        if (blockOverlay)
         {
             spriteRenderer.color = Color.red;
         }
-        else 
-        { 
+        else if (isOccupied)
+        {
+            spriteRenderer.color = Color.white;
+        }
+        else
+        {
             spriteRenderer.color = Color.gray;
         }
     }
@@ -31,7 +35,7 @@ public class Cell : MonoBehaviour
     {
         if (collision.collider.gameObject.tag == "Anchor")
         {
-            CellGrid.Instance.RemoveAnchorPoint(this.gameObject);
+            CellGrid.Instance.RemoveBlockOverlay(this.gameObject, collision.collider.gameObject);
         }
     }
 }

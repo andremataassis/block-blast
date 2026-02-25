@@ -12,10 +12,17 @@ public class Block : MonoBehaviour
     public GameObject cellPrefab;
     public GameObject anchorCellPrefab;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private Vector2 initialPos;
+    public BoxCollider2D BoxCollider;
+    void Awake()
     {
         block_data = new BlockData(array, anchor);
+        BoxCollider = GetComponent<BoxCollider2D>();
+    }
+
+    private void Start()
+    {
+        initialPos = transform.position;
         createBlock();
     }
 
@@ -49,8 +56,16 @@ public class Block : MonoBehaviour
                 newCell.transform.localPosition = position;
             }
         }
+
+        //Fix collider based on shape
+        Vector2 scale = block_data.getWidthAndHeight();
+        BoxCollider.size = scale;
+        float x_offset = scale.x % 2 == 0 ? 0.5f : 0;
+        float y_offset = scale.y % 2 == 0 ? 0.5f : 0;
+        BoxCollider.offset = new Vector2(x_offset, y_offset);
     }
 
+    #region Click and Drag
     private Vector2 offset;
     void OnMouseDown()
     {
@@ -60,5 +75,20 @@ public class Block : MonoBehaviour
     {
         Vector2 curPosition = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
         transform.position = curPosition;
+    }
+    #endregion Click and Drag
+
+    //Placing block
+    private void OnMouseUp()
+    {
+        bool result = CellGrid.Instance.placeBlock();
+        if (result == false)
+        {
+            transform.position = initialPos;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

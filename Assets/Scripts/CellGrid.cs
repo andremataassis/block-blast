@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class CellGrid : MonoBehaviour
 {
@@ -27,15 +28,20 @@ public class CellGrid : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                GameObject newChild = Instantiate(childPrefab, this.transform);
-                Vector2 position = new Vector2();
-                position.x = -3.5f + i;
-                position.y = -3.5f + j;
-                newChild.transform.position = position;
-                newChild.name = "(" + (i + 1) + ", " + (j + 1) + ")";
-                newChild.GetComponent<Cell>().coord = new Vector2(i, j);
+        if (transform.childCount == 0)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    GameObject newChild = Instantiate(childPrefab, this.transform);
+                    Vector2 position = new Vector2();
+                    position.x = -3.5f + i;
+                    position.y = -3.5f + j;
+                    newChild.transform.position = position;
+                    newChild.name = "(" + (i) + ", " + (j) + ")";
+                    newChild.GetComponent<Cell>().coord = new Vector2(i, j);
+                }
             }
         }
     }
@@ -52,19 +58,18 @@ public class CellGrid : MonoBehaviour
 
         if(collision.collider.gameObject.tag == "Anchor")
         {
-            PlaceAnchorPoint(myCollidedCell, collision.collider.gameObject);
+            PlaceBlockOverlay(myCollidedCell, collision.collider.gameObject);
         }
     }
-    public void PlaceAnchorPoint(GameObject anchorCell_grid, GameObject anchorCell_block)
+    public void PlaceBlockOverlay(GameObject anchorCell_grid, GameObject anchorCell_block)
     {
         if (currentAnchorPoint == null) {
             //Get cells around anchor point
-            BlockData data = anchorCell_block.transform.parent.GetComponent<Block>().block_data;
-            List<Vector2> list = data.GetData();
+            List<Vector2> list = anchorCell_block.transform.parent.GetComponent<Block>().block_data.GetData();
 
             Vector2 anchorCoord_grid = anchorCell_grid.GetComponent<Cell>().coord;
 
-            //Try to place them
+            //Check that they can be placed
             foreach(Vector2 cellAround in list)
             {
                 Transform cellOnGrid = transform.Find($"({anchorCoord_grid.x + cellAround.x}, {anchorCoord_grid.y + cellAround.y})");
@@ -72,24 +77,111 @@ public class CellGrid : MonoBehaviour
                 {
                     return;
                 }
-                else
+                else if (cellOnGrid.GetComponent<Cell>().isOccupied)
                 {
-                    Debug.Log(cellOnGrid);
-                    cellOnGrid.GetComponent<Cell>().hasBlock = true;
+                    return;
                 }
             }
 
+            //Place them :)
+            foreach (Vector2 cellAround in list)
+            {
+                Transform cellOnGrid = transform.Find($"({anchorCoord_grid.x + cellAround.x}, {anchorCoord_grid.y + cellAround.y})");
+                cellOnGrid.GetComponent<Cell>().blockOverlay = true;
+            }
+
             currentAnchorPoint = anchorCell_grid;
-            anchorCell_grid.GetComponent<Cell>().isAnchor = true;
         }
     }
 
-    public void RemoveAnchorPoint(GameObject cell)
+    public void RemoveBlockOverlay(GameObject anchorCell_grid, GameObject anchorCell_block)
     {
-        if (cell == currentAnchorPoint)
+        if (anchorCell_grid == currentAnchorPoint)
         {
-            cell.GetComponent<Cell>().isAnchor = false;
+            //Get cells around anchor point
+            List<Vector2> list = anchorCell_block.transform.parent.GetComponent<Block>().block_data.GetData();
+
+            Vector2 anchorCoord_grid = anchorCell_grid.GetComponent<Cell>().coord;
+
+            //Remove overlay blocks
+            foreach (Vector2 cellAround in list)
+            {
+                Transform cellOnGrid = transform.Find($"({anchorCoord_grid.x + cellAround.x}, {anchorCoord_grid.y + cellAround.y})");
+                cellOnGrid.GetComponent<Cell>().blockOverlay = false;
+            }
+
             currentAnchorPoint = null;
+        }
+    }
+
+    //Returns true if block is placed
+    public bool placeBlock()
+    {
+        if(currentAnchorPoint == null)
+        {
+            return false;
+        }
+        else
+        {
+            foreach(Transform child in transform)
+            {
+                Cell cellComponent = child.GetComponent<Cell>();
+                bool overlayed = cellComponent.blockOverlay;
+                if (overlayed)
+                {
+                    cellComponent.isOccupied = true;
+                    cellComponent.blockOverlay = false;
+                }
+            }
+            currentAnchorPoint = null;
+            checkForClear();
+            return true;
+        }
+    }
+
+    public void checkForClear()
+    {
+        int[] countPerX = new int[8];
+        int[] countPerY = new int[8];
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++)
+            {
+                Transform cellOnGrid = transform.Find($"({x}, {y})");
+                if (cellOnGrid.GetComponent<Cell>().isOccupied)
+                {
+                    countPerX[y] += 1;
+                    countPerY[x] += 1;
+                }
+            }
+        }
+
+        for(int i = 0; i < 8; i++) {
+            if (countPerX[i] == 8)
+            {
+                clearRow(i);
+            }
+            if (countPerY[i] == 8)
+            {
+                clearColumn(i);
+            }
+        }
+    }
+
+    public void clearRow(int y)
+    {
+        for (int i = 0; i < 8; i++) 
+        {
+            Transform cellOnGrid = transform.Find($"({i}, {y})");
+            cellOnGrid.GetComponent<Cell>().isOccupied = false;
+        }
+    }
+
+    public void clearColumn(int x) 
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            Transform cellOnGrid = transform.Find($"({x}, {i})");
+            cellOnGrid.GetComponent<Cell>().isOccupied = false;
         }
     }
 }
