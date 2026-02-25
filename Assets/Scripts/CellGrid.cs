@@ -28,8 +28,16 @@ public class CellGrid : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (transform.childCount == 0)
+        if (transform.childCount <= 1)
         {
+            //destroy all children (gets rid of placeholder)
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                GameObject child = transform.GetChild(i).gameObject;
+                Destroy(child);
+            }
+
+            //Make grid
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -38,7 +46,7 @@ public class CellGrid : MonoBehaviour
                     Vector2 position = new Vector2();
                     position.x = -3.5f + i;
                     position.y = -3.5f + j;
-                    newChild.transform.position = position;
+                    newChild.transform.localPosition = position;
                     newChild.name = "(" + (i) + ", " + (j) + ")";
                     newChild.GetComponent<Cell>().coord = new Vector2(i, j);
                 }
@@ -130,6 +138,7 @@ public class CellGrid : MonoBehaviour
                 if (overlayed)
                 {
                     cellComponent.isOccupied = true;
+                    cellComponent.playParticleEffect = true;
                     cellComponent.blockOverlay = false;
                 }
             }

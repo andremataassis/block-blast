@@ -5,6 +5,8 @@ public class Cell : MonoBehaviour
     public Vector2 coord = new Vector2();
     public bool blockOverlay = false;
     public bool isOccupied = false;
+    public bool playParticleEffect = false;
+    public ParticleSystem ParticleSystem;
 
     private SpriteRenderer spriteRenderer;
     
@@ -12,6 +14,7 @@ public class Cell : MonoBehaviour
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        ParticleSystem = GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -24,10 +27,18 @@ public class Cell : MonoBehaviour
         else if (isOccupied)
         {
             spriteRenderer.color = Color.white;
+            playParticleEffect = true;
         }
         else
         {
             spriteRenderer.color = Color.gray;
+
+            if(playParticleEffect)
+            {
+                Debug.Log("Kaboom");
+                ParticleSystem.Play();
+                playParticleEffect = false;
+            }
         }
     }
 
