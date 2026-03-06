@@ -159,6 +159,7 @@ MonoBehaviour:
   playParticleEffect: 0
   ParticleSystem: {fileID: 0}
   blockSprite: {fileID: 5865670524570963042, guid: 2a87be399cfddb64a8a4ac287ecebc57, type: 3}
+  blockColor: {r: 1, g: 0.49411765, b: 1, a: 1}
 --- !u!199 &-1786290860091579030
 ParticleSystemRenderer:
   serializedVersion: 7

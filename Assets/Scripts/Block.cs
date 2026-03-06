@@ -15,6 +15,7 @@ public class Block : MonoBehaviour
     private Vector2 initialPos;
     private bool beingDragged = false;
     public BoxCollider2D BoxCollider;
+
     void Awake()
     {
         block_data = new BlockData(array, anchor);
@@ -90,7 +91,8 @@ public class Block : MonoBehaviour
     //Placing block
     private void OnMouseUp()
     {
-        bool result = CellGrid.Instance.placeBlock();
+        Color blockColor = GetComponentInChildren<SpriteRenderer>().color;
+        bool result = CellGrid.Instance.placeBlock(blockColor);
         if (result == false)
         {
             transform.position = initialPos;

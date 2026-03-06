@@ -130,7 +130,7 @@ public class CellGrid : MonoBehaviour
     }
 
     //Returns true if block is placed
-    public bool placeBlock()
+    public bool placeBlock(Color blockColor)
     {
         if(currentAnchorPoint == null)
         {
@@ -147,6 +147,8 @@ public class CellGrid : MonoBehaviour
                     cellComponent.isOccupied = true;
                     cellComponent.playParticleEffect = true;
                     cellComponent.blockOverlay = false;
+
+                    cellComponent.blockColor = blockColor;
                 }
             }
             currentAnchorPoint = null;

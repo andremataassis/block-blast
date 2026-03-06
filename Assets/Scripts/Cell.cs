@@ -11,7 +11,8 @@ public class Cell : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Sprite regularSprite;
     public Sprite blockSprite;
-    
+    public Color blockColor;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,7 +31,7 @@ public class Cell : MonoBehaviour
         }
         else if (isOccupied)
         {
-            spriteRenderer.color = Color.green;
+            spriteRenderer.color = blockColor;
             spriteRenderer.sprite = blockSprite;
             playParticleEffect = true;
         }
