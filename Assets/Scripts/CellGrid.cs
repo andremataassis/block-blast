@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Rendering;
 
 public class CellGrid : MonoBehaviour
@@ -9,6 +10,10 @@ public class CellGrid : MonoBehaviour
 
     //The current anchor point ON THE GRID
     public GameObject currentAnchorPoint = null;
+
+    private BlockPool blockPoolReferece = null;
+
+    public UnityEvent gameOver;
 
     #region SINGLETON
     public static CellGrid Instance { get; private set; }
@@ -28,6 +33,8 @@ public class CellGrid : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        blockPoolReferece = GameObject.Find("BlockPool").GetComponent<BlockPool>();
+        
         if (transform.childCount <= 1)
         {
             //destroy all children (gets rid of placeholder)
@@ -148,6 +155,56 @@ public class CellGrid : MonoBehaviour
         }
     }
 
+    public void checkGameOver()
+    {
+        List<BlockData> blockPoolData = blockPoolReferece.getBlockDataOfAll();
+
+        if (blockPoolData.Count == 0) return;
+
+        int foundSpots = 0;
+        foreach(BlockData blockData in blockPoolData)
+        {
+            bool foundASpot = false;
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 8; y++)
+                {
+                    Transform cellOnGrid = transform.Find($"({x}, {y})");
+
+                    //Get cells around anchor point
+                    List<Vector2> list = blockData.GetData();
+                    Vector2 anchorCoord_grid = cellOnGrid.GetComponent<Cell>().coord;
+
+                    //Check that they can be placed
+                    bool placeable = true;
+                    foreach (Vector2 cellAround in list)
+                    {
+                        Transform cell = transform.Find($"({anchorCoord_grid.x + cellAround.x}, {anchorCoord_grid.y + cellAround.y})");
+                        if (cell == null)
+                        {
+                            placeable = false;
+                        }
+                        else if (cell.GetComponent<Cell>().isOccupied)
+                        {
+                            placeable = false;
+                        }
+                    }
+                    if (placeable) 
+                    {
+                        foundASpot = true;
+                        goto endOfFors;
+                    }
+                }
+            }
+            endOfFors:
+            if (foundASpot) foundSpots++;
+        }
+
+        if (foundSpots == 0)
+        {
+            gameOver.Invoke();
+        }
+    }
     public void checkForClear()
     {
         int[] countPerX = new int[8];

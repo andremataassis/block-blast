@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,6 +22,7 @@ public class BlockPool : MonoBehaviour
         if (checkIfEmpty())
         {
             populatePool();
+            CellGrid.Instance.checkGameOver();
         }
     }
 
@@ -52,5 +54,16 @@ public class BlockPool : MonoBehaviour
 
             blocksOut[i] = newBlock;
         }
+    }
+
+    public List<BlockData> getBlockDataOfAll()
+    {
+        List<BlockData> return_data = new List<BlockData>();
+        foreach(var block in blocksOut)
+        {
+            if(block != null) return_data.Add(block.GetComponent<Block>().block_data);
+        }
+
+        return return_data;
     }
 }

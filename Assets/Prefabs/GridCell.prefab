@@ -85,8 +85,8 @@ SpriteRenderer:
   m_SortingLayer: -1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.63522005, g: 0.63522005, b: 0.63522005, a: 1}
+  m_Sprite: {fileID: -7143427080918577792, guid: ea7ceca18cd46114a9e0d72a0d710d3c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -156,7 +156,9 @@ MonoBehaviour:
   coord: {x: 0, y: 0}
   blockOverlay: 0
   isOccupied: 0
+  playParticleEffect: 0
   ParticleSystem: {fileID: 0}
+  blockSprite: {fileID: 5865670524570963042, guid: 2a87be399cfddb64a8a4ac287ecebc57, type: 3}
 --- !u!199 &-1786290860091579030
 ParticleSystemRenderer:
   serializedVersion: 7

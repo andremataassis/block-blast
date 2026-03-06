@@ -98,7 +98,8 @@ public class Block : MonoBehaviour
         }
         else
         {
-            Destroy(this.gameObject);
+            DestroyImmediate(this.gameObject);
+            CellGrid.Instance.checkGameOver();
         }
     }
 }

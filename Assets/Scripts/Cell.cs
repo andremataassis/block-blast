@@ -9,12 +9,16 @@ public class Cell : MonoBehaviour
     public ParticleSystem ParticleSystem;
 
     private SpriteRenderer spriteRenderer;
+    private Sprite regularSprite;
+    public Sprite blockSprite;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         ParticleSystem = GetComponent<ParticleSystem>();
+
+        regularSprite = GetComponent<SpriteRenderer>().sprite;
     }
 
     // Update is called once per frame
@@ -22,20 +26,21 @@ public class Cell : MonoBehaviour
     {
         if (blockOverlay)
         {
-            spriteRenderer.color = Color.red;
+            spriteRenderer.color = Color.gray;
         }
         else if (isOccupied)
         {
-            spriteRenderer.color = Color.white;
+            spriteRenderer.color = Color.green;
+            spriteRenderer.sprite = blockSprite;
             playParticleEffect = true;
         }
         else
         {
-            spriteRenderer.color = Color.gray;
+            spriteRenderer.color = Color.white;
+            spriteRenderer.sprite = regularSprite;
 
             if(playParticleEffect)
             {
-                Debug.Log("Kaboom");
                 ParticleSystem.Play();
                 playParticleEffect = false;
             }
